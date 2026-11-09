@@ -907,7 +907,15 @@ button { cursor: pointer; }
     var body = ad.tab==='resumen' ? resumenHTML() : ad.tab==='calendario' ? calendarioHTML() : ad.tab==='reservas' ? reservasHTML() : flotaHTML();
     var nav = TABS.map(function(t){ return '<button class="nv" data-act="atab" data-t="'+t[0]+'"'+(ad.tab===t[0]?' aria-current="page"':'')+'>'+AI[t[0]]+t[1]+(t[0]==='reservas' && freshCount() ? '<span class="dot"></span>' : '')+'</button>'; }).join('');
     var y = window.scrollY;
+    var prevTl = admEl.querySelector('.tl'), prevLeft = prevTl ? prevTl.scrollLeft : null, tlKey = ad.tab + '|' + ad.month.getTime();
+    var sameView = admEl.dataset.tlkey === tlKey;
     admEl.innerHTML = '<div class="adm"><nav class="side" aria-label="Panel del dueño"><div class="logo"><span class="brandchip"><img src="'+LOGO+'" alt="Morrocoybeach"></span></div>'+nav+'<div class="who"><div class="avatar">LC</div><div>Morrocoybeach<small>Administrador</small></div></div></nav><div class="main">'+body+'</div></div>'+modalHTML();
+    var tl = admEl.querySelector('.tl');
+    if (tl){
+      if (prevLeft !== null && sameView) tl.scrollLeft = prevLeft;
+      else { var td = tl.querySelector('th.today'); tl.scrollLeft = td ? Math.max(0, td.offsetLeft - 150) : 0; }
+    }
+    admEl.dataset.tlkey = tlKey;
     window.scrollTo(0, y);
   }
   function openRes(id){ ad.modal = { type:'res', id:id, cc:false }; renderAdmin(); }
